@@ -1,0 +1,29 @@
+# Simple backend without model loading
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+class AskRequest(BaseModel):
+    question: str
+
+@app.post("/ask")
+async def ask(req: AskRequest):
+    """Simple endpoint that returns a mock response"""
+    return {"answer": f"Mock response for: {req.question}. The web search agent is working!"}
+
+@app.get("/")
+async def root():
+    return {"message": "Backend is running!", "status": "ok"}
+
+@app.get("/health")
+async def health():
+    return {"status": "healthy"}
